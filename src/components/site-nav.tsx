@@ -30,15 +30,15 @@ export function SiteNav() {
             ))}
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="hidden sm:inline-block font-mono text-[10px] bg-primary/10 text-primary px-2 py-1 rounded">
-            IRR 34%
-          </span>
+        <div className="flex items-center gap-3">
+          <Link to="/auth" className="text-sm font-medium text-muted hover:text-primary transition-colors">
+            Sign in
+          </Link>
           <Link
-            to="/contact"
+            to="/dashboard"
             className="bg-primary text-primary-foreground px-5 py-2 rounded-full text-sm font-bold hover:bg-primary/90 transition-all"
           >
-            Request Deck
+            Farmer Dashboard
           </Link>
         </div>
       </div>
