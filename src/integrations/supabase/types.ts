@@ -106,6 +106,68 @@ export type Database = {
         }
         Relationships: []
       }
+      listings: {
+        Row: {
+          category: Database["public"]["Enums"]["listing_category"]
+          created_at: string
+          currency: string | null
+          description: string | null
+          farm_id: string
+          id: string
+          image_path: string | null
+          location: string | null
+          price: number | null
+          quantity: number | null
+          status: Database["public"]["Enums"]["listing_status"]
+          title: string
+          unit: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["listing_category"]
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          farm_id: string
+          id?: string
+          image_path?: string | null
+          location?: string | null
+          price?: number | null
+          quantity?: number | null
+          status?: Database["public"]["Enums"]["listing_status"]
+          title: string
+          unit?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["listing_category"]
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          farm_id?: string
+          id?: string
+          image_path?: string | null
+          location?: string | null
+          price?: number | null
+          quantity?: number | null
+          status?: Database["public"]["Enums"]["listing_status"]
+          title?: string
+          unit?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listings_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           country: string | null
@@ -147,7 +209,14 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      listing_category:
+        | "vegetable"
+        | "fruit"
+        | "staple"
+        | "livestock"
+        | "dairy"
+        | "other"
+      listing_status: "active" | "sold" | "draft"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -274,6 +343,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      listing_category: [
+        "vegetable",
+        "fruit",
+        "staple",
+        "livestock",
+        "dairy",
+        "other",
+      ],
+      listing_status: ["active", "sold", "draft"],
+    },
   },
 } as const

@@ -2,13 +2,33 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
+const ALLOWED_MIMES = ["image/jpeg", "image/png", "image/webp"] as const;
+const MAX_BYTES = 8 * 1024 * 1024; // 8MB
+const MIN_BYTES = 1024; // 1KB sanity floor
+
 const InputSchema = z.object({
   farm_id: z.string().uuid(),
   subject_type: z.enum(["crop", "livestock"]),
   subject_name: z.string().trim().max(100).optional(),
-  image_path: z.string().min(1).max(500),
-  image_mime: z.string().min(1).max(50),
+  image_path: z.string().min(1).max(500).regex(/^[a-zA-Z0-9/_.\-]+$/, "Invalid image path"),
+  image_mime: z.enum(ALLOWED_MIMES),
 });
+
+function sniffMime(bytes: Uint8Array): string | null {
+  // JPEG: FF D8 FF
+  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "image/jpeg";
+  // PNG: 89 50 4E 47 0D 0A 1A 0A
+  if (
+    bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47 &&
+    bytes[4] === 0x0d && bytes[5] === 0x0a && bytes[6] === 0x1a && bytes[7] === 0x0a
+  ) return "image/png";
+  // WEBP: RIFF....WEBP
+  if (
+    bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 &&
+    bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50
+  ) return "image/webp";
+  return null;
+}
 
 type DiagnosisJson = {
   diagnosis: string;
@@ -44,7 +64,28 @@ export const diagnoseSubject = createServerFn({ method: "POST" })
       .download(data.image_path);
     if (dlErr || !blob) throw new Error("Could not read uploaded image");
 
+    // Server-side size + type checks
+    if (blob.size > MAX_BYTES) {
+      await supabase.storage.from("diagnoses").remove([data.image_path]);
+      throw new Error(`Image too large (max ${MAX_BYTES / 1024 / 1024}MB)`);
+    }
+    if (blob.size < MIN_BYTES) {
+      await supabase.storage.from("diagnoses").remove([data.image_path]);
+      throw new Error("Image is empty or corrupted");
+    }
+
     const arrayBuf = await blob.arrayBuffer();
+    const bytes = new Uint8Array(arrayBuf);
+    const sniffed = sniffMime(bytes);
+    if (!sniffed || !ALLOWED_MIMES.includes(sniffed as (typeof ALLOWED_MIMES)[number])) {
+      await supabase.storage.from("diagnoses").remove([data.image_path]);
+      throw new Error("Unsupported image format. Use JPEG, PNG, or WEBP.");
+    }
+    if (sniffed !== data.image_mime) {
+      // Trust the sniffed type over the client-declared type
+      data.image_mime = sniffed as (typeof ALLOWED_MIMES)[number];
+    }
+
     const base64 = Buffer.from(arrayBuf).toString("base64");
     const dataUrl = `data:${data.image_mime};base64,${base64}`;
 

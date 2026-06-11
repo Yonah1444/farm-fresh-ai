@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as MarketRouteImport } from './routes/market'
 import { Route as InvestmentRouteImport } from './routes/investment'
 import { Route as EcosystemRouteImport } from './routes/ecosystem'
@@ -17,12 +18,18 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedListingsRouteImport } from './routes/_authenticated/listings'
 import { Route as AuthenticatedDiagnoseRouteImport } from './routes/_authenticated/diagnose'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceRoute = MarketplaceRouteImport.update({
+  id: '/marketplace',
+  path: '/marketplace',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketRoute = MarketRouteImport.update({
@@ -59,6 +66,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedListingsRoute = AuthenticatedListingsRouteImport.update({
+  id: '/listings',
+  path: '/listings',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDiagnoseRoute = AuthenticatedDiagnoseRouteImport.update({
   id: '/diagnose',
   path: '/diagnose',
@@ -77,9 +89,11 @@ export interface FileRoutesByFullPath {
   '/ecosystem': typeof EcosystemRoute
   '/investment': typeof InvestmentRoute
   '/market': typeof MarketRoute
+  '/marketplace': typeof MarketplaceRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/diagnose': typeof AuthenticatedDiagnoseRoute
+  '/listings': typeof AuthenticatedListingsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -88,9 +102,11 @@ export interface FileRoutesByTo {
   '/ecosystem': typeof EcosystemRoute
   '/investment': typeof InvestmentRoute
   '/market': typeof MarketRoute
+  '/marketplace': typeof MarketplaceRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/diagnose': typeof AuthenticatedDiagnoseRoute
+  '/listings': typeof AuthenticatedListingsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -101,9 +117,11 @@ export interface FileRoutesById {
   '/ecosystem': typeof EcosystemRoute
   '/investment': typeof InvestmentRoute
   '/market': typeof MarketRoute
+  '/marketplace': typeof MarketplaceRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/diagnose': typeof AuthenticatedDiagnoseRoute
+  '/_authenticated/listings': typeof AuthenticatedListingsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -114,9 +132,11 @@ export interface FileRouteTypes {
     | '/ecosystem'
     | '/investment'
     | '/market'
+    | '/marketplace'
     | '/sitemap.xml'
     | '/dashboard'
     | '/diagnose'
+    | '/listings'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -125,9 +145,11 @@ export interface FileRouteTypes {
     | '/ecosystem'
     | '/investment'
     | '/market'
+    | '/marketplace'
     | '/sitemap.xml'
     | '/dashboard'
     | '/diagnose'
+    | '/listings'
   id:
     | '__root__'
     | '/'
@@ -137,9 +159,11 @@ export interface FileRouteTypes {
     | '/ecosystem'
     | '/investment'
     | '/market'
+    | '/marketplace'
     | '/sitemap.xml'
     | '/_authenticated/dashboard'
     | '/_authenticated/diagnose'
+    | '/_authenticated/listings'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -150,6 +174,7 @@ export interface RootRouteChildren {
   EcosystemRoute: typeof EcosystemRoute
   InvestmentRoute: typeof InvestmentRoute
   MarketRoute: typeof MarketRoute
+  MarketplaceRoute: typeof MarketplaceRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
@@ -160,6 +185,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketplace': {
+      id: '/marketplace'
+      path: '/marketplace'
+      fullPath: '/marketplace'
+      preLoaderRoute: typeof MarketplaceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/market': {
@@ -211,6 +243,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/listings': {
+      id: '/_authenticated/listings'
+      path: '/listings'
+      fullPath: '/listings'
+      preLoaderRoute: typeof AuthenticatedListingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/diagnose': {
       id: '/_authenticated/diagnose'
       path: '/diagnose'
@@ -231,11 +270,13 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDiagnoseRoute: typeof AuthenticatedDiagnoseRoute
+  AuthenticatedListingsRoute: typeof AuthenticatedListingsRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDiagnoseRoute: AuthenticatedDiagnoseRoute,
+  AuthenticatedListingsRoute: AuthenticatedListingsRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -249,6 +290,7 @@ const rootRouteChildren: RootRouteChildren = {
   EcosystemRoute: EcosystemRoute,
   InvestmentRoute: InvestmentRoute,
   MarketRoute: MarketRoute,
+  MarketplaceRoute: MarketplaceRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
