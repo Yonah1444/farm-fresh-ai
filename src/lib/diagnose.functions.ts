@@ -64,7 +64,28 @@ export const diagnoseSubject = createServerFn({ method: "POST" })
       .download(data.image_path);
     if (dlErr || !blob) throw new Error("Could not read uploaded image");
 
+    // Server-side size + type checks
+    if (blob.size > MAX_BYTES) {
+      await supabase.storage.from("diagnoses").remove([data.image_path]);
+      throw new Error(`Image too large (max ${MAX_BYTES / 1024 / 1024}MB)`);
+    }
+    if (blob.size < MIN_BYTES) {
+      await supabase.storage.from("diagnoses").remove([data.image_path]);
+      throw new Error("Image is empty or corrupted");
+    }
+
     const arrayBuf = await blob.arrayBuffer();
+    const bytes = new Uint8Array(arrayBuf);
+    const sniffed = sniffMime(bytes);
+    if (!sniffed || !ALLOWED_MIMES.includes(sniffed as (typeof ALLOWED_MIMES)[number])) {
+      await supabase.storage.from("diagnoses").remove([data.image_path]);
+      throw new Error("Unsupported image format. Use JPEG, PNG, or WEBP.");
+    }
+    if (sniffed !== data.image_mime) {
+      // Trust the sniffed type over the client-declared type
+      data.image_mime = sniffed as (typeof ALLOWED_MIMES)[number];
+    }
+
     const base64 = Buffer.from(arrayBuf).toString("base64");
     const dataUrl = `data:${data.image_mime};base64,${base64}`;
 
