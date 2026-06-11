@@ -14,6 +14,59 @@ export type Database = {
   }
   public: {
     Tables: {
+      diagnoses: {
+        Row: {
+          confidence: string | null
+          created_at: string
+          diagnosis: string
+          farm_id: string
+          id: string
+          image_path: string | null
+          raw_response: Json | null
+          subject_name: string | null
+          subject_type: string
+          treatment: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          confidence?: string | null
+          created_at?: string
+          diagnosis: string
+          farm_id: string
+          id?: string
+          image_path?: string | null
+          raw_response?: Json | null
+          subject_name?: string | null
+          subject_type: string
+          treatment?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          confidence?: string | null
+          created_at?: string
+          diagnosis?: string
+          farm_id?: string
+          id?: string
+          image_path?: string | null
+          raw_response?: Json | null
+          subject_name?: string | null
+          subject_type?: string
+          treatment?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "diagnoses_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       farms: {
         Row: {
           created_at: string
