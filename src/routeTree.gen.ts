@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as MarketRouteImport } from './routes/market'
 import { Route as InvestmentRouteImport } from './routes/investment'
 import { Route as EcosystemRouteImport } from './routes/ecosystem'
@@ -23,6 +24,11 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceRoute = MarketplaceRouteImport.update({
+  id: '/marketplace',
+  path: '/marketplace',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketRoute = MarketRouteImport.update({
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/ecosystem': typeof EcosystemRoute
   '/investment': typeof InvestmentRoute
   '/market': typeof MarketRoute
+  '/marketplace': typeof MarketplaceRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/diagnose': typeof AuthenticatedDiagnoseRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/ecosystem': typeof EcosystemRoute
   '/investment': typeof InvestmentRoute
   '/market': typeof MarketRoute
+  '/marketplace': typeof MarketplaceRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/diagnose': typeof AuthenticatedDiagnoseRoute
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/ecosystem': typeof EcosystemRoute
   '/investment': typeof InvestmentRoute
   '/market': typeof MarketRoute
+  '/marketplace': typeof MarketplaceRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/diagnose': typeof AuthenticatedDiagnoseRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/ecosystem'
     | '/investment'
     | '/market'
+    | '/marketplace'
     | '/sitemap.xml'
     | '/dashboard'
     | '/diagnose'
@@ -125,6 +135,7 @@ export interface FileRouteTypes {
     | '/ecosystem'
     | '/investment'
     | '/market'
+    | '/marketplace'
     | '/sitemap.xml'
     | '/dashboard'
     | '/diagnose'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
     | '/ecosystem'
     | '/investment'
     | '/market'
+    | '/marketplace'
     | '/sitemap.xml'
     | '/_authenticated/dashboard'
     | '/_authenticated/diagnose'
@@ -150,6 +162,7 @@ export interface RootRouteChildren {
   EcosystemRoute: typeof EcosystemRoute
   InvestmentRoute: typeof InvestmentRoute
   MarketRoute: typeof MarketRoute
+  MarketplaceRoute: typeof MarketplaceRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
@@ -160,6 +173,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketplace': {
+      id: '/marketplace'
+      path: '/marketplace'
+      fullPath: '/marketplace'
+      preLoaderRoute: typeof MarketplaceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/market': {
@@ -249,8 +269,19 @@ const rootRouteChildren: RootRouteChildren = {
   EcosystemRoute: EcosystemRoute,
   InvestmentRoute: InvestmentRoute,
   MarketRoute: MarketRoute,
+  MarketplaceRoute: MarketplaceRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
