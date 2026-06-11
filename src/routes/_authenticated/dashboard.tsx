@@ -142,6 +142,12 @@ function Dashboard() {
             AgriConnect AI
           </Link>
           <div className="flex items-center gap-3">
+            <Link
+              to="/diagnose"
+              className="text-sm font-bold bg-primary text-primary-foreground px-4 py-2 rounded-full hover:bg-primary/90"
+            >
+              AI Diagnosis
+            </Link>
             <span className="text-sm text-muted-foreground hidden sm:inline">
               {profile?.full_name ?? user.email}
             </span>
