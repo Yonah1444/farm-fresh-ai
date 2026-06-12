@@ -14,6 +14,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      alerts: {
+        Row: {
+          created_at: string
+          farm_id: string | null
+          id: string
+          message: string
+          payload: Json
+          read_at: string | null
+          severity: Database["public"]["Enums"]["alert_severity"]
+          title: string
+          type: Database["public"]["Enums"]["alert_type"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          farm_id?: string | null
+          id?: string
+          message: string
+          payload?: Json
+          read_at?: string | null
+          severity?: Database["public"]["Enums"]["alert_severity"]
+          title: string
+          type: Database["public"]["Enums"]["alert_type"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          farm_id?: string | null
+          id?: string
+          message?: string
+          payload?: Json
+          read_at?: string | null
+          severity?: Database["public"]["Enums"]["alert_severity"]
+          title?: string
+          type?: Database["public"]["Enums"]["alert_type"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alerts_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversations: {
         Row: {
           buyer_id: string
@@ -203,6 +250,39 @@ export type Database = {
           },
         ]
       }
+      market_prices: {
+        Row: {
+          created_at: string
+          crop: string
+          currency: string
+          id: string
+          market: string | null
+          observed_at: string
+          price: number
+          unit: string
+        }
+        Insert: {
+          created_at?: string
+          crop: string
+          currency?: string
+          id?: string
+          market?: string | null
+          observed_at?: string
+          price: number
+          unit?: string
+        }
+        Update: {
+          created_at?: string
+          crop?: string
+          currency?: string
+          id?: string
+          market?: string | null
+          observed_at?: string
+          price?: number
+          unit?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           body: string
@@ -234,6 +314,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      price_alert_prefs: {
+        Row: {
+          active: boolean
+          created_at: string
+          crop: string
+          currency: string
+          direction: Database["public"]["Enums"]["price_direction"]
+          id: string
+          target_price: number
+          unit: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          crop: string
+          currency?: string
+          direction?: Database["public"]["Enums"]["price_direction"]
+          id?: string
+          target_price: number
+          unit?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          crop?: string
+          currency?: string
+          direction?: Database["public"]["Enums"]["price_direction"]
+          id?: string
+          target_price?: number
+          unit?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -279,6 +398,8 @@ export type Database = {
       }
     }
     Enums: {
+      alert_severity: "info" | "warning" | "critical"
+      alert_type: "weather" | "price"
       listing_category:
         | "vegetable"
         | "fruit"
@@ -287,6 +408,7 @@ export type Database = {
         | "dairy"
         | "other"
       listing_status: "active" | "sold" | "draft"
+      price_direction: "above" | "below"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -414,6 +536,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      alert_severity: ["info", "warning", "critical"],
+      alert_type: ["weather", "price"],
       listing_category: [
         "vegetable",
         "fruit",
@@ -423,6 +547,7 @@ export const Constants = {
         "other",
       ],
       listing_status: ["active", "sold", "draft"],
+      price_direction: ["above", "below"],
     },
   },
 } as const
