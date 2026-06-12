@@ -1,9 +1,13 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Sprout, MapPin } from "lucide-react";
+import { Sprout, MapPin, MessageSquare } from "lucide-react";
+import { toast } from "sonner";
+import { startConversation } from "@/lib/chat.functions";
 
 export const Route = createFileRoute("/marketplace")({
   head: () => ({
@@ -21,6 +25,7 @@ export const Route = createFileRoute("/marketplace")({
 
 type Listing = {
   id: string;
+  user_id: string;
   title: string;
   category: string;
   quantity: number | null;
@@ -36,20 +41,28 @@ type Listing = {
 const CATEGORIES = ["all", "vegetable", "fruit", "staple", "livestock", "dairy", "other"] as const;
 
 function Marketplace() {
+  const navigate = useNavigate();
+  const startFn = useServerFn(startConversation);
   const [rows, setRows] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [cat, setCat] = useState<(typeof CATEGORIES)[number]>("all");
+  const [me, setMe] = useState<string | null>(null);
+  const [contacting, setContacting] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase
-        .from("listings")
-        .select("id,title,category,quantity,unit,price,currency,description,location,image_path,created_at")
-        .eq("status", "active")
-        .order("created_at", { ascending: false })
-        .limit(120);
+      const [{ data }, { data: u }] = await Promise.all([
+        supabase
+          .from("listings")
+          .select("id,user_id,title,category,quantity,unit,price,currency,description,location,image_path,created_at")
+          .eq("status", "active")
+          .order("created_at", { ascending: false })
+          .limit(120),
+        supabase.auth.getUser(),
+      ]);
       setRows(data ?? []);
+      setMe(u.user?.id ?? null);
       setLoading(false);
     })();
   }, []);
@@ -67,6 +80,23 @@ function Marketplace() {
     return supabase.storage.from("listings").getPublicUrl(path).data.publicUrl;
   }
 
+  async function contact(listingId: string) {
+    if (!me) {
+      toast.message("Sign in to message the farmer");
+      navigate({ to: "/auth" });
+      return;
+    }
+    setContacting(listingId);
+    try {
+      const r = (await startFn({ data: { listing_id: listingId } })) as { id: string };
+      navigate({ to: "/messages/$id", params: { id: r.id } });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not start chat");
+    } finally {
+      setContacting(null);
+    }
+  }
+
   return (
     <main className="min-h-screen bg-background">
       <section className="border-b border-border">
@@ -76,7 +106,7 @@ function Marketplace() {
             Direct from the farm.
           </h1>
           <p className="text-muted mt-4 max-w-2xl">
-            Browse produce, livestock, and dairy from verified farmers across the region. Contact farmers directly — no middlemen.
+            Browse produce, livestock, and dairy from verified farmers across the region. Chat directly with farmers to negotiate price and pickup.
           </p>
           <div className="mt-8 flex flex-wrap gap-3 items-center">
             <Input
@@ -120,8 +150,9 @@ function Marketplace() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((l) => {
               const img = imgUrl(l.image_path);
+              const isOwn = me === l.user_id;
               return (
-                <Card key={l.id} className="overflow-hidden">
+                <Card key={l.id} className="overflow-hidden flex flex-col">
                   <div className="aspect-[4/3] bg-muted/10 overflow-hidden">
                     {img ? (
                       <img src={img} alt={l.title} className="w-full h-full object-cover" loading="lazy" />
@@ -131,7 +162,7 @@ function Marketplace() {
                       </div>
                     )}
                   </div>
-                  <CardContent className="p-5 space-y-2">
+                  <CardContent className="p-5 space-y-2 flex-1 flex flex-col">
                     <div className="flex items-start justify-between gap-2">
                       <h3 className="font-semibold text-lg leading-tight">{l.title}</h3>
                       <span className="text-xs uppercase tracking-wider text-accent">{l.category}</span>
@@ -155,6 +186,17 @@ function Marketplace() {
                         <MapPin className="h-3 w-3" /> {l.location}
                       </p>
                     )}
+                    <div className="pt-3 mt-auto">
+                      <Button
+                        size="sm"
+                        className="w-full"
+                        disabled={isOwn || contacting === l.id}
+                        onClick={() => contact(l.id)}
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                        {isOwn ? "Your listing" : contacting === l.id ? "Opening…" : "Message farmer"}
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               );
