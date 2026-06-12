@@ -48,11 +48,11 @@ type AlertInsert = {
   severity: "info" | "warning" | "critical";
   title: string;
   message: string;
-  payload: Record<string, unknown>;
+  payload: any;
 };
 
-function weatherAlertsFor(farmName: string, location: string, days: WeatherPoint[]): Omit<AlertInsert, "user_id" | "farm_id">[] {
-  const out: Omit<AlertInsert, "user_id" | "farm_id">[] = [];
+function weatherAlertsFor(farmName: string, location: string, days: WeatherPoint[]): Array<Omit<AlertInsert, "user_id" | "farm_id">> {
+  const out: Array<Omit<AlertInsert, "user_id" | "farm_id">> = [];
   for (const d of days) {
     if (d.precip >= 30) {
       out.push({
