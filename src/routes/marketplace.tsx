@@ -83,7 +83,7 @@ function Marketplace() {
   async function contact(listingId: string) {
     if (!me) {
       toast.message("Sign in to message the farmer");
-      navigate({ to: "/auth", search: { redirect: "/marketplace" } as never });
+      navigate({ to: "/auth" });
       return;
     }
     setContacting(listingId);
