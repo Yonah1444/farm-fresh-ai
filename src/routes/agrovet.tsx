@@ -1,11 +1,27 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Sprout, Search } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetFooter,
+} from "@/components/ui/sheet";
+import { Sprout, Search, ShoppingCart, Plus, Minus, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import { placeOrder } from "@/lib/orders.functions";
+
+const CART_KEY = "agrovet_cart_v1";
+type CartItem = { product_id: string; quantity: number };
 
 export const Route = createFileRoute("/agrovet")({
   head: () => ({
