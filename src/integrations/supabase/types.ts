@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      agrovet_products: {
+        Row: {
+          active: boolean
+          agrovet_id: string
+          category: Database["public"]["Enums"]["agrovet_category"]
+          created_at: string
+          description: string | null
+          id: string
+          image_path: string | null
+          name: string
+          price_kes: number
+          stock: number
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          agrovet_id: string
+          category: Database["public"]["Enums"]["agrovet_category"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_path?: string | null
+          name: string
+          price_kes: number
+          stock?: number
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          agrovet_id?: string
+          category?: Database["public"]["Enums"]["agrovet_category"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_path?: string | null
+          name?: string
+          price_kes?: number
+          stock?: number
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       alerts: {
         Row: {
           created_at: string
@@ -387,19 +432,55 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       is_conversation_member: {
         Args: { _conversation_id: string; _user_id: string }
         Returns: boolean
       }
     }
     Enums: {
+      agrovet_category:
+        | "seed"
+        | "fertilizer"
+        | "pesticide"
+        | "feed"
+        | "equipment"
+        | "other"
       alert_severity: "info" | "warning" | "critical"
       alert_type: "weather" | "price"
+      app_role: "admin" | "agrovet" | "buyer"
       listing_category:
         | "vegetable"
         | "fruit"
@@ -536,8 +617,17 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      agrovet_category: [
+        "seed",
+        "fertilizer",
+        "pesticide",
+        "feed",
+        "equipment",
+        "other",
+      ],
       alert_severity: ["info", "warning", "critical"],
       alert_type: ["weather", "price"],
+      app_role: ["admin", "agrovet", "buyer"],
       listing_category: [
         "vegetable",
         "fruit",

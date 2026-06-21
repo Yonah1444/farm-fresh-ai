@@ -16,6 +16,7 @@ import { Route as InvestmentRouteImport } from './routes/investment'
 import { Route as EcosystemRouteImport } from './routes/ecosystem'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AgrovetRouteImport } from './routes/agrovet'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedMessagesRouteImport } from './routes/_authenticated/messages'
@@ -23,6 +24,7 @@ import { Route as AuthenticatedListingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedDiagnoseRouteImport } from './routes/_authenticated/diagnose'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAlertsRouteImport } from './routes/_authenticated/alerts'
+import { Route as AuthenticatedAgrovetProductsRouteImport } from './routes/_authenticated/agrovet-products'
 import { Route as AuthenticatedMessagesIdRouteImport } from './routes/_authenticated/messages.$id'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -60,6 +62,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgrovetRoute = AgrovetRouteImport.update({
+  id: '/agrovet',
+  path: '/agrovet',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -94,6 +101,12 @@ const AuthenticatedAlertsRoute = AuthenticatedAlertsRouteImport.update({
   path: '/alerts',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAgrovetProductsRoute =
+  AuthenticatedAgrovetProductsRouteImport.update({
+    id: '/agrovet-products',
+    path: '/agrovet-products',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedMessagesIdRoute = AuthenticatedMessagesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -102,6 +115,7 @@ const AuthenticatedMessagesIdRoute = AuthenticatedMessagesIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/agrovet': typeof AgrovetRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/ecosystem': typeof EcosystemRoute
@@ -109,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/market': typeof MarketRoute
   '/marketplace': typeof MarketplaceRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/agrovet-products': typeof AuthenticatedAgrovetProductsRoute
   '/alerts': typeof AuthenticatedAlertsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/diagnose': typeof AuthenticatedDiagnoseRoute
@@ -118,6 +133,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/agrovet': typeof AgrovetRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/ecosystem': typeof EcosystemRoute
@@ -125,6 +141,7 @@ export interface FileRoutesByTo {
   '/market': typeof MarketRoute
   '/marketplace': typeof MarketplaceRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/agrovet-products': typeof AuthenticatedAgrovetProductsRoute
   '/alerts': typeof AuthenticatedAlertsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/diagnose': typeof AuthenticatedDiagnoseRoute
@@ -136,6 +153,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/agrovet': typeof AgrovetRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/ecosystem': typeof EcosystemRoute
@@ -143,6 +161,7 @@ export interface FileRoutesById {
   '/market': typeof MarketRoute
   '/marketplace': typeof MarketplaceRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/_authenticated/agrovet-products': typeof AuthenticatedAgrovetProductsRoute
   '/_authenticated/alerts': typeof AuthenticatedAlertsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/diagnose': typeof AuthenticatedDiagnoseRoute
@@ -154,6 +173,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/agrovet'
     | '/auth'
     | '/contact'
     | '/ecosystem'
@@ -161,6 +181,7 @@ export interface FileRouteTypes {
     | '/market'
     | '/marketplace'
     | '/sitemap.xml'
+    | '/agrovet-products'
     | '/alerts'
     | '/dashboard'
     | '/diagnose'
@@ -170,6 +191,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/agrovet'
     | '/auth'
     | '/contact'
     | '/ecosystem'
@@ -177,6 +199,7 @@ export interface FileRouteTypes {
     | '/market'
     | '/marketplace'
     | '/sitemap.xml'
+    | '/agrovet-products'
     | '/alerts'
     | '/dashboard'
     | '/diagnose'
@@ -187,6 +210,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/agrovet'
     | '/auth'
     | '/contact'
     | '/ecosystem'
@@ -194,6 +218,7 @@ export interface FileRouteTypes {
     | '/market'
     | '/marketplace'
     | '/sitemap.xml'
+    | '/_authenticated/agrovet-products'
     | '/_authenticated/alerts'
     | '/_authenticated/dashboard'
     | '/_authenticated/diagnose'
@@ -205,6 +230,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AgrovetRoute: typeof AgrovetRoute
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
   EcosystemRoute: typeof EcosystemRoute
@@ -265,6 +291,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agrovet': {
+      id: '/agrovet'
+      path: '/agrovet'
+      fullPath: '/agrovet'
+      preLoaderRoute: typeof AgrovetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -314,6 +347,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAlertsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/agrovet-products': {
+      id: '/_authenticated/agrovet-products'
+      path: '/agrovet-products'
+      fullPath: '/agrovet-products'
+      preLoaderRoute: typeof AuthenticatedAgrovetProductsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/messages/$id': {
       id: '/_authenticated/messages/$id'
       path: '/$id'
@@ -338,6 +378,7 @@ const AuthenticatedMessagesRouteWithChildren =
   )
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAgrovetProductsRoute: typeof AuthenticatedAgrovetProductsRoute
   AuthenticatedAlertsRoute: typeof AuthenticatedAlertsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDiagnoseRoute: typeof AuthenticatedDiagnoseRoute
@@ -346,6 +387,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAgrovetProductsRoute: AuthenticatedAgrovetProductsRoute,
   AuthenticatedAlertsRoute: AuthenticatedAlertsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDiagnoseRoute: AuthenticatedDiagnoseRoute,
@@ -359,6 +401,7 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AgrovetRoute: AgrovetRoute,
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
   EcosystemRoute: EcosystemRoute,
@@ -370,13 +413,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

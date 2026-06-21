@@ -166,6 +166,12 @@ function Dashboard() {
             >
               Alerts
             </Link>
+            <Link
+              to="/agrovet-products"
+              className="text-sm font-bold border border-border px-3 py-2 rounded-full hover:bg-accent/10"
+            >
+              Agrovet
+            </Link>
             <span className="text-sm text-muted-foreground hidden md:inline">
               {profile?.full_name ?? user.email}
             </span>

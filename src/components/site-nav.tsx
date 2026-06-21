@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 
 const links = [
   { to: "/marketplace", label: "Marketplace" },
+  { to: "/agrovet", label: "Agrovet Inputs" },
   { to: "/ecosystem", label: "Ecosystem" },
   { to: "/market", label: "Market Analysis" },
   { to: "/investment", label: "Investment" },
