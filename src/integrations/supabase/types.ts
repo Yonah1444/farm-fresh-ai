@@ -360,6 +360,90 @@ export type Database = {
           },
         ]
       }
+      order_items: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          order_id: string
+          product_id: string | null
+          quantity: number
+          subtotal_kes: number
+          unit_price_kes: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          order_id: string
+          product_id?: string | null
+          quantity: number
+          subtotal_kes: number
+          unit_price_kes: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          order_id?: string
+          product_id?: string | null
+          quantity?: number
+          subtotal_kes?: number
+          unit_price_kes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "agrovet_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          agrovet_id: string
+          buyer_id: string
+          contact_phone: string | null
+          created_at: string
+          delivery_notes: string | null
+          id: string
+          status: Database["public"]["Enums"]["order_status"]
+          total_kes: number
+          updated_at: string
+        }
+        Insert: {
+          agrovet_id: string
+          buyer_id: string
+          contact_phone?: string | null
+          created_at?: string
+          delivery_notes?: string | null
+          id?: string
+          status?: Database["public"]["Enums"]["order_status"]
+          total_kes?: number
+          updated_at?: string
+        }
+        Update: {
+          agrovet_id?: string
+          buyer_id?: string
+          contact_phone?: string | null
+          created_at?: string
+          delivery_notes?: string | null
+          id?: string
+          status?: Database["public"]["Enums"]["order_status"]
+          total_kes?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       price_alert_prefs: {
         Row: {
           active: boolean
@@ -489,6 +573,7 @@ export type Database = {
         | "dairy"
         | "other"
       listing_status: "active" | "sold" | "draft"
+      order_status: "pending" | "confirmed" | "cancelled" | "fulfilled"
       price_direction: "above" | "below"
     }
     CompositeTypes: {
@@ -637,6 +722,7 @@ export const Constants = {
         "other",
       ],
       listing_status: ["active", "sold", "draft"],
+      order_status: ["pending", "confirmed", "cancelled", "fulfilled"],
       price_direction: ["above", "below"],
     },
   },
