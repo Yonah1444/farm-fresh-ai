@@ -16,9 +16,13 @@ import {
   SheetTrigger,
   SheetFooter,
 } from "@/components/ui/sheet";
-import { Sprout, Search, ShoppingCart, Plus, Minus, Trash2 } from "lucide-react";
+import { Sprout, Search, ShoppingCart, Plus, Minus, Trash2, MessageSquareQuote } from "lucide-react";
 import { toast } from "sonner";
 import { placeOrder } from "@/lib/orders.functions";
+import { createQuoteRequest } from "@/lib/quotes.functions";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from "@/components/ui/dialog";
 
 const CART_KEY = "agrovet_cart_v1";
 type CartItem = { product_id: string; quantity: number };
@@ -67,6 +71,7 @@ const CATEGORIES = [
 function AgrovetCatalog() {
   const navigate = useNavigate();
   const submitOrder = useServerFn(placeOrder);
+  const submitQuote = useServerFn(createQuoteRequest);
   const [items, setItems] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
@@ -76,6 +81,11 @@ function AgrovetCatalog() {
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
   const [placing, setPlacing] = useState(false);
+  const [quoteFor, setQuoteFor] = useState<Product | null>(null);
+  const [qQty, setQQty] = useState("1");
+  const [qMsg, setQMsg] = useState("");
+  const [qPhone, setQPhone] = useState("");
+  const [qSending, setQSending] = useState(false);
 
   useEffect(() => {
     void load();
@@ -311,6 +321,9 @@ function AgrovetCatalog() {
             <Link to="/orders" className="text-sm text-muted hover:text-primary">
               My orders →
             </Link>
+            <Link to="/quotes" className="text-sm text-muted hover:text-primary">
+              My quotes →
+            </Link>
             <Link to="/auth" className="text-sm text-muted hover:text-primary">
               Are you an agrovet? <span className="font-semibold">Sign in to list →</span>
             </Link>
@@ -373,15 +386,25 @@ function AgrovetCatalog() {
                         {p.stock > 0 ? `${p.stock} in stock` : "Out of stock"}
                       </div>
                     </div>
-                    <Button
-                      size="sm"
-                      className="mt-2 w-full"
-                      disabled={p.stock <= 0}
-                      onClick={() => addToCart(p)}
-                    >
-                      <ShoppingCart className="w-4 h-4" />
-                      {inCart ? `In cart (${inCart.quantity})` : p.stock > 0 ? "Add to cart" : "Out of stock"}
-                    </Button>
+                    <div className="mt-2 flex gap-2">
+                      <Button
+                        size="sm"
+                        className="flex-1"
+                        disabled={p.stock <= 0}
+                        onClick={() => addToCart(p)}
+                      >
+                        <ShoppingCart className="w-4 h-4" />
+                        {inCart ? `In cart (${inCart.quantity})` : p.stock > 0 ? "Add" : "Out"}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => { setQuoteFor(p); setQQty("1"); setQMsg(""); setQPhone(""); }}
+                      >
+                        <MessageSquareQuote className="w-4 h-4" />
+                        Quote
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               );
@@ -389,6 +412,63 @@ function AgrovetCatalog() {
           </div>
         )}
       </section>
+
+      <Dialog open={!!quoteFor} onOpenChange={(o) => !o && setQuoteFor(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Request quote: {quoteFor?.name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label htmlFor="qty">Quantity ({quoteFor?.unit})</Label>
+              <Input id="qty" type="number" min="1" value={qQty} onChange={(e) => setQQty(e.target.value)} />
+            </div>
+            <div>
+              <Label htmlFor="qphone">Your phone</Label>
+              <Input id="qphone" value={qPhone} onChange={(e) => setQPhone(e.target.value)} placeholder="+254…" maxLength={30} />
+            </div>
+            <div>
+              <Label htmlFor="qmsg">Message (optional)</Label>
+              <Textarea id="qmsg" value={qMsg} onChange={(e) => setQMsg(e.target.value)} maxLength={1000} rows={3} placeholder="Delivery location, urgency, etc." />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              disabled={qSending}
+              onClick={async () => {
+                if (!quoteFor) return;
+                const qty = Number(qQty);
+                if (!qty || qty < 1) return toast.error("Enter a valid quantity");
+                const { data: { session } } = await supabase.auth.getSession();
+                if (!session) {
+                  toast.error("Please sign in to request a quote");
+                  navigate({ to: "/auth" });
+                  return;
+                }
+                setQSending(true);
+                try {
+                  await submitQuote({
+                    data: {
+                      product_id: quoteFor.id,
+                      quantity: qty,
+                      message: qMsg || undefined,
+                      contact_phone: qPhone || undefined,
+                    },
+                  });
+                  toast.success("Quote request sent");
+                  setQuoteFor(null);
+                } catch (e) {
+                  toast.error(e instanceof Error ? e.message : "Failed");
+                } finally {
+                  setQSending(false);
+                }
+              }}
+            >
+              {qSending ? "Sending…" : "Send request"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }
