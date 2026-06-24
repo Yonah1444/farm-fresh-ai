@@ -295,6 +295,13 @@ function Dashboard() {
                           {farm.location ?? "Unspecified location"}
                           {farm.hectares ? ` • ${farm.hectares} ha` : ""}
                         </CardDescription>
+                        <Link
+                          to="/farms/$farmId/activities"
+                          params={{ farmId: farm.id }}
+                          className="text-xs text-primary hover:underline inline-block mt-1"
+                        >
+                          View activity log →
+                        </Link>
                       </div>
                       <Button variant="ghost" size="icon" onClick={() => deleteFarm(farm.id)}>
                         <Trash2 className="w-4 h-4" />
