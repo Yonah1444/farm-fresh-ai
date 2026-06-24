@@ -71,6 +71,7 @@ const CATEGORIES = [
 function AgrovetCatalog() {
   const navigate = useNavigate();
   const submitOrder = useServerFn(placeOrder);
+  const submitQuote = useServerFn(createQuoteRequest);
   const [items, setItems] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
@@ -80,6 +81,11 @@ function AgrovetCatalog() {
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
   const [placing, setPlacing] = useState(false);
+  const [quoteFor, setQuoteFor] = useState<Product | null>(null);
+  const [qQty, setQQty] = useState("1");
+  const [qMsg, setQMsg] = useState("");
+  const [qPhone, setQPhone] = useState("");
+  const [qSending, setQSending] = useState(false);
 
   useEffect(() => {
     void load();
