@@ -194,6 +194,59 @@ export type Database = {
           },
         ]
       }
+      farm_activities: {
+        Row: {
+          cost_kes: number | null
+          created_at: string
+          farm_id: string
+          id: string
+          notes: string | null
+          occurred_at: string
+          quantity: number | null
+          title: string
+          type: Database["public"]["Enums"]["farm_activity_type"]
+          unit: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cost_kes?: number | null
+          created_at?: string
+          farm_id: string
+          id?: string
+          notes?: string | null
+          occurred_at?: string
+          quantity?: number | null
+          title: string
+          type: Database["public"]["Enums"]["farm_activity_type"]
+          unit?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cost_kes?: number | null
+          created_at?: string
+          farm_id?: string
+          id?: string
+          notes?: string | null
+          occurred_at?: string
+          quantity?: number | null
+          title?: string
+          type?: Database["public"]["Enums"]["farm_activity_type"]
+          unit?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "farm_activities_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       farms: {
         Row: {
           created_at: string
@@ -516,6 +569,59 @@ export type Database = {
         }
         Relationships: []
       }
+      quote_requests: {
+        Row: {
+          agrovet_id: string
+          buyer_id: string
+          contact_phone: string | null
+          created_at: string
+          id: string
+          message: string | null
+          product_id: string
+          quantity: number
+          quoted_note: string | null
+          quoted_price_kes: number | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          agrovet_id: string
+          buyer_id: string
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          message?: string | null
+          product_id: string
+          quantity: number
+          quoted_note?: string | null
+          quoted_price_kes?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          agrovet_id?: string
+          buyer_id?: string
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          message?: string | null
+          product_id?: string
+          quantity?: number
+          quoted_note?: string | null
+          quoted_price_kes?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_requests_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "agrovet_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -565,6 +671,16 @@ export type Database = {
       alert_severity: "info" | "warning" | "critical"
       alert_type: "weather" | "price"
       app_role: "admin" | "agrovet" | "buyer"
+      farm_activity_type:
+        | "planting"
+        | "harvest"
+        | "treatment"
+        | "fertilizer"
+        | "irrigation"
+        | "pest_control"
+        | "vaccination"
+        | "sale"
+        | "other"
       listing_category:
         | "vegetable"
         | "fruit"
@@ -713,6 +829,17 @@ export const Constants = {
       alert_severity: ["info", "warning", "critical"],
       alert_type: ["weather", "price"],
       app_role: ["admin", "agrovet", "buyer"],
+      farm_activity_type: [
+        "planting",
+        "harvest",
+        "treatment",
+        "fertilizer",
+        "irrigation",
+        "pest_control",
+        "vaccination",
+        "sale",
+        "other",
+      ],
       listing_category: [
         "vegetable",
         "fruit",
