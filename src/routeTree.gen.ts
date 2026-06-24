@@ -19,6 +19,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AgrovetRouteImport } from './routes/agrovet'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedQuotesRouteImport } from './routes/_authenticated/quotes'
 import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
 import { Route as AuthenticatedMessagesRouteImport } from './routes/_authenticated/messages'
 import { Route as AuthenticatedListingsRouteImport } from './routes/_authenticated/listings'
@@ -27,6 +28,8 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAlertsRouteImport } from './routes/_authenticated/alerts'
 import { Route as AuthenticatedAgrovetProductsRouteImport } from './routes/_authenticated/agrovet-products'
 import { Route as AuthenticatedMessagesIdRouteImport } from './routes/_authenticated/messages.$id'
+import { Route as ApiPublicHooksWeatherPullRouteImport } from './routes/api/public/hooks/weather-pull'
+import { Route as AuthenticatedFarmsFarmIdActivitiesRouteImport } from './routes/_authenticated/farms.$farmId.activities'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -77,6 +80,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedQuotesRoute = AuthenticatedQuotesRouteImport.update({
+  id: '/quotes',
+  path: '/quotes',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
   id: '/orders',
   path: '/orders',
@@ -118,6 +126,18 @@ const AuthenticatedMessagesIdRoute = AuthenticatedMessagesIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AuthenticatedMessagesRoute,
 } as any)
+const ApiPublicHooksWeatherPullRoute =
+  ApiPublicHooksWeatherPullRouteImport.update({
+    id: '/api/public/hooks/weather-pull',
+    path: '/api/public/hooks/weather-pull',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedFarmsFarmIdActivitiesRoute =
+  AuthenticatedFarmsFarmIdActivitiesRouteImport.update({
+    id: '/farms/$farmId/activities',
+    path: '/farms/$farmId/activities',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -136,7 +156,10 @@ export interface FileRoutesByFullPath {
   '/listings': typeof AuthenticatedListingsRoute
   '/messages': typeof AuthenticatedMessagesRouteWithChildren
   '/orders': typeof AuthenticatedOrdersRoute
+  '/quotes': typeof AuthenticatedQuotesRoute
   '/messages/$id': typeof AuthenticatedMessagesIdRoute
+  '/farms/$farmId/activities': typeof AuthenticatedFarmsFarmIdActivitiesRoute
+  '/api/public/hooks/weather-pull': typeof ApiPublicHooksWeatherPullRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -155,7 +178,10 @@ export interface FileRoutesByTo {
   '/listings': typeof AuthenticatedListingsRoute
   '/messages': typeof AuthenticatedMessagesRouteWithChildren
   '/orders': typeof AuthenticatedOrdersRoute
+  '/quotes': typeof AuthenticatedQuotesRoute
   '/messages/$id': typeof AuthenticatedMessagesIdRoute
+  '/farms/$farmId/activities': typeof AuthenticatedFarmsFarmIdActivitiesRoute
+  '/api/public/hooks/weather-pull': typeof ApiPublicHooksWeatherPullRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -176,7 +202,10 @@ export interface FileRoutesById {
   '/_authenticated/listings': typeof AuthenticatedListingsRoute
   '/_authenticated/messages': typeof AuthenticatedMessagesRouteWithChildren
   '/_authenticated/orders': typeof AuthenticatedOrdersRoute
+  '/_authenticated/quotes': typeof AuthenticatedQuotesRoute
   '/_authenticated/messages/$id': typeof AuthenticatedMessagesIdRoute
+  '/_authenticated/farms/$farmId/activities': typeof AuthenticatedFarmsFarmIdActivitiesRoute
+  '/api/public/hooks/weather-pull': typeof ApiPublicHooksWeatherPullRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -197,7 +226,10 @@ export interface FileRouteTypes {
     | '/listings'
     | '/messages'
     | '/orders'
+    | '/quotes'
     | '/messages/$id'
+    | '/farms/$farmId/activities'
+    | '/api/public/hooks/weather-pull'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -216,7 +248,10 @@ export interface FileRouteTypes {
     | '/listings'
     | '/messages'
     | '/orders'
+    | '/quotes'
     | '/messages/$id'
+    | '/farms/$farmId/activities'
+    | '/api/public/hooks/weather-pull'
   id:
     | '__root__'
     | '/'
@@ -236,7 +271,10 @@ export interface FileRouteTypes {
     | '/_authenticated/listings'
     | '/_authenticated/messages'
     | '/_authenticated/orders'
+    | '/_authenticated/quotes'
     | '/_authenticated/messages/$id'
+    | '/_authenticated/farms/$farmId/activities'
+    | '/api/public/hooks/weather-pull'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -250,6 +288,7 @@ export interface RootRouteChildren {
   MarketRoute: typeof MarketRoute
   MarketplaceRoute: typeof MarketplaceRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiPublicHooksWeatherPullRoute: typeof ApiPublicHooksWeatherPullRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -324,6 +363,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/quotes': {
+      id: '/_authenticated/quotes'
+      path: '/quotes'
+      fullPath: '/quotes'
+      preLoaderRoute: typeof AuthenticatedQuotesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/orders': {
       id: '/_authenticated/orders'
       path: '/orders'
@@ -380,6 +426,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMessagesIdRouteImport
       parentRoute: typeof AuthenticatedMessagesRoute
     }
+    '/api/public/hooks/weather-pull': {
+      id: '/api/public/hooks/weather-pull'
+      path: '/api/public/hooks/weather-pull'
+      fullPath: '/api/public/hooks/weather-pull'
+      preLoaderRoute: typeof ApiPublicHooksWeatherPullRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/farms/$farmId/activities': {
+      id: '/_authenticated/farms/$farmId/activities'
+      path: '/farms/$farmId/activities'
+      fullPath: '/farms/$farmId/activities'
+      preLoaderRoute: typeof AuthenticatedFarmsFarmIdActivitiesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -404,6 +464,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedListingsRoute: typeof AuthenticatedListingsRoute
   AuthenticatedMessagesRoute: typeof AuthenticatedMessagesRouteWithChildren
   AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRoute
+  AuthenticatedQuotesRoute: typeof AuthenticatedQuotesRoute
+  AuthenticatedFarmsFarmIdActivitiesRoute: typeof AuthenticatedFarmsFarmIdActivitiesRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -414,6 +476,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedListingsRoute: AuthenticatedListingsRoute,
   AuthenticatedMessagesRoute: AuthenticatedMessagesRouteWithChildren,
   AuthenticatedOrdersRoute: AuthenticatedOrdersRoute,
+  AuthenticatedQuotesRoute: AuthenticatedQuotesRoute,
+  AuthenticatedFarmsFarmIdActivitiesRoute:
+    AuthenticatedFarmsFarmIdActivitiesRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -430,6 +495,7 @@ const rootRouteChildren: RootRouteChildren = {
   MarketRoute: MarketRoute,
   MarketplaceRoute: MarketplaceRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiPublicHooksWeatherPullRoute: ApiPublicHooksWeatherPullRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

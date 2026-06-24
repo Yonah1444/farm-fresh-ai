@@ -16,9 +16,13 @@ import {
   SheetTrigger,
   SheetFooter,
 } from "@/components/ui/sheet";
-import { Sprout, Search, ShoppingCart, Plus, Minus, Trash2 } from "lucide-react";
+import { Sprout, Search, ShoppingCart, Plus, Minus, Trash2, MessageSquareQuote } from "lucide-react";
 import { toast } from "sonner";
 import { placeOrder } from "@/lib/orders.functions";
+import { createQuoteRequest } from "@/lib/quotes.functions";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from "@/components/ui/dialog";
 
 const CART_KEY = "agrovet_cart_v1";
 type CartItem = { product_id: string; quantity: number };
