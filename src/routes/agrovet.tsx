@@ -321,6 +321,9 @@ function AgrovetCatalog() {
             <Link to="/orders" className="text-sm text-muted hover:text-primary">
               My orders →
             </Link>
+            <Link to="/quotes" className="text-sm text-muted hover:text-primary">
+              My quotes →
+            </Link>
             <Link to="/auth" className="text-sm text-muted hover:text-primary">
               Are you an agrovet? <span className="font-semibold">Sign in to list →</span>
             </Link>
